@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -64,10 +65,18 @@ public class BasicItemController {
         return "basic/editForm";
     }
 
-    @PostMapping("/{itemId}/edit")
+
     public String edit(@PathVariable Long itemId,@ModelAttribute Item item){
         itemRepository.update(itemId,item);
         return "redirect:/basic/items/{itemId}"; // 리다이렉트 한다(300번대이고 location 부분 데이터 추가됨)
+    }
+
+    @PostMapping("/{itemId}/edit")
+    public String addItem(Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}";
     }
 
 
